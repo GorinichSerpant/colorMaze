@@ -1,1 +1,1 @@
-# colorMaze
+VisualGrid

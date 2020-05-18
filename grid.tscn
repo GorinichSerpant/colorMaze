@@ -1,0 +1,81 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://new_tileset.tres" type="TileSet" id=1]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends TileMap
+
+onready var frame = get_parent()
+
+var tileSet
+
+export var darkstart = 0.2
+export var darkend = 0.3
+
+export var greystart = 0.5
+export var greyend = 0.6
+
+export var whitestart = 0.8
+export var whiteend = 0.9
+
+var rng = RandomNumberGenerator.new()
+var coloredTile = load(\"res://coloredTile.tscn\")
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	if get_name() != frame.currentGird :
+		print(get_name())
+		print(frame.currentGird)
+		print(\"nope\")
+		return
+	else:
+		print(get_name())
+		print(\"yes\")
+		set_visible(true)
+	
+	for i in range(10):
+		for j in range (10):
+			createSprite(i,j)
+
+
+func checkPassiblity(color, direction):
+	var nextCell = world_to_map(position) + direction
+	
+	if tile_set.tile_get_name(nextCell) == color || tile_set.tile_get_name(nextCell) == \"grey\":
+		return true
+	else:
+		return false
+
+func createSprite(x, y):
+	var ID = get_cell(x,y)
+	rng.randomize()
+	var hue = rng.randf_range(0.0,1.0)
+	var value = 0.0
+	
+	if ID == 3:
+		value = rng.randf_range(greystart, greyend)
+	if ID == 2:
+		value = rng.randf_range(darkstart, darkend)
+	if ID == 4:
+		value = rng.randf_range(whitestart, whiteend)
+	if ID == 5 || ID == 6:
+		return
+	
+	var tileColor = Color.from_hsv(hue,0.5,value,1.0)
+	
+	var coloredTile_instance = coloredTile.instance()
+	coloredTile_instance.set_name(\"Tile\"+String(x)+\"_\"+String(y))
+	add_child(coloredTile_instance)
+	
+	coloredTile_instance.set_modulate(tileColor)
+	
+	coloredTile_instance.set_position(Vector2(x*16+8,y*16+8))
+"
+
+[node name="grid" type="TileMap"]
+position = Vector2( 6, 5 )
+tile_set = ExtResource( 1 )
+cell_size = Vector2( 16, 16 )
+format = 1
+tile_data = PoolIntArray( 0, 4, 0, 1, 4, 0, 2, 4, 0, 3, 4, 0, 4, 2, 0, 5, 3, 0, 6, 2, 0, 7, 4, 0, 8, 3, 0, 9, 4, 0, 65536, 4, 0, 65537, 2, 0, 65538, 2, 0, 65539, 4, 0, 65540, 4, 0, 65541, 3, 0, 65542, 2, 0, 65543, 2, 0, 65544, 5, 0, 65545, 2, 0, 131072, 2, 0, 131073, 2, 0, 131074, 4, 0, 131075, 3, 0, 131076, 2, 0, 131077, 2, 0, 131078, 4, 0, 131079, 2, 0, 131080, 4, 0, 131081, 4, 0, 196608, 3, 0, 196609, 3, 0, 196610, 2, 0, 196611, 2, 0, 196612, 4, 0, 196613, 4, 0, 196614, 2, 0, 196615, 3, 0, 196616, 2, 0, 196617, 4, 0, 262144, 4, 0, 262145, 4, 0, 262146, 3, 0, 262147, 4, 0, 262148, 2, 0, 262149, 3, 0, 262150, 4, 0, 262151, 4, 0, 262152, 2, 0, 262153, 3, 0, 327680, 4, 0, 327681, 2, 0, 327682, 2, 0, 327683, 3, 0, 327684, 2, 0, 327685, 2, 0, 327686, 3, 0, 327687, 4, 0, 327688, 4, 0, 327689, 4, 0, 393216, 4, 0, 393217, 3, 0, 393218, 2, 0, 393219, 4, 0, 393220, 4, 0, 393221, 4, 0, 393222, 3, 0, 393223, 2, 0, 393224, 3, 0, 393225, 4, 0, 458752, 2, 0, 458753, 4, 0, 458754, 4, 0, 458755, 2, 0, 458756, 3, 0, 458757, 4, 0, 458758, 2, 0, 458759, 4, 0, 458760, 2, 0, 458761, 3, 0, 524288, 2, 0, 524289, 6, 0, 524290, 3, 0, 524291, 4, 0, 524292, 2, 0, 524293, 2, 0, 524294, 3, 0, 524295, 4, 0, 524296, 4, 0, 524297, 3, 0, 589824, 4, 0, 589825, 2, 0, 589826, 2, 0, 589827, 2, 0, 589828, 2, 0, 589829, 3, 0, 589830, 4, 0, 589831, 3, 0, 589832, 4, 0, 589833, 2, 0 )
+script = SubResource( 1 )

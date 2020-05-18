@@ -1,0 +1,108 @@
+[gd_scene load_steps=12 format=2]
+
+[ext_resource path="res://grid.tscn" type="PackedScene" id=1]
+[ext_resource path="res://player.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Label.gd" type="Script" id=3]
+[ext_resource path="res://tutroialAnimation.png" type="Texture" id=4]
+[ext_resource path="res://Tutorial.tres" type="Animation" id=5]
+[ext_resource path="res://whiteArrows.png" type="Texture" id=6]
+[ext_resource path="res://blackArrows.png" type="Texture" id=7]
+[ext_resource path="res://Yellow Forest.ogg" type="AudioStream" id=8]
+[ext_resource path="res://NFF-bump.wav" type="AudioStream" id=9]
+[ext_resource path="res://Impact.gd" type="Script" id=10]
+[ext_resource path="res://Frame.gd" type="Script" id=11]
+
+[node name="Game" type="Node"]
+
+[node name="Background" type="ColorRect" parent="."]
+margin_left = -159.418
+margin_top = -53.0549
+margin_right = 332.582
+margin_bottom = 246.945
+color = Color( 0.392157, 0.509804, 0.607843, 1 )
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Frame" type="ColorRect" parent="."]
+margin_left = -5.0
+margin_top = -5.0
+margin_right = 167.0
+margin_bottom = 166.0
+color = Color( 0, 0, 0, 1 )
+script = ExtResource( 11 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="blackArrows" type="Sprite" parent="Frame"]
+position = Vector2( -25.4798, 146.799 )
+texture = ExtResource( 7 )
+
+[node name="whiteArrows" type="Sprite" parent="Frame"]
+position = Vector2( 197.759, 146.792 )
+texture = ExtResource( 6 )
+
+[node name="grid" parent="Frame" instance=ExtResource( 1 )]
+visible = false
+
+[node name="2" parent="Frame" instance=ExtResource( 1 )]
+visible = false
+tile_data = PoolIntArray( 0, 4, 0, 1, 4, 0, 2, 4, 0, 3, 4, 0, 4, 2, 0, 5, 3, 0, 6, 2, 0, 7, 4, 0, 8, 3, 0, 9, 4, 0, 65536, 4, 0, 65537, 4, 0, 65538, 4, 0, 65539, 4, 0, 65540, 4, 0, 65541, 4, 0, 65542, 4, 0, 65543, 4, 0, 65544, 5, 0, 65545, 2, 0, 131072, 4, 0, 131073, 4, 0, 131074, 4, 0, 131075, 2, 0, 131076, 4, 0, 131077, 4, 0, 131078, 2, 0, 131079, 4, 0, 131080, 4, 0, 131081, 4, 0, 196608, 3, 0, 196609, 3, 0, 196610, 2, 0, 196611, 2, 0, 196612, 4, 0, 196613, 4, 0, 196614, 2, 0, 196615, 2, 0, 196616, 4, 0, 196617, 4, 0, 262144, 4, 0, 262145, 4, 0, 262146, 3, 0, 262147, 4, 0, 262148, 2, 0, 262149, 3, 0, 262150, 4, 0, 262151, 4, 0, 262152, 4, 0, 262153, 4, 0, 327680, 4, 0, 327681, 2, 0, 327682, 2, 0, 327683, 4, 0, 327684, 4, 0, 327685, 2, 0, 327686, 3, 0, 327687, 4, 0, 327688, 4, 0, 327689, 4, 0, 393216, 4, 0, 393217, 3, 0, 393218, 2, 0, 393219, 4, 0, 393220, 4, 0, 393221, 4, 0, 393222, 3, 0, 393223, 2, 0, 393224, 4, 0, 393225, 4, 0, 458752, 4, 0, 458753, 4, 0, 458754, 2, 0, 458755, 2, 0, 458756, 3, 0, 458757, 4, 0, 458758, 2, 0, 458759, 2, 0, 458760, 4, 0, 458761, 3, 0, 524288, 4, 0, 524289, 6, 0, 524290, 4, 0, 524291, 2, 0, 524292, 2, 0, 524293, 2, 0, 524294, 4, 0, 524295, 4, 0, 524296, 6, 0, 524297, 3, 0, 589824, 4, 0, 589825, 2, 0, 589826, 4, 0, 589827, 4, 0, 589828, 4, 0, 589829, 4, 0, 589830, 4, 0, 589831, 3, 0, 589832, 4, 0, 589833, 2, 0 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Frame"]
+autoplay = "Tutorial"
+anims/Tutorial = ExtResource( 5 )
+
+[node name="TutorialAnim" type="Sprite" parent="Frame/AnimationPlayer"]
+position = Vector2( 80, 179 )
+texture = ExtResource( 4 )
+vframes = 4
+frame = 2
+
+[node name="player1" parent="Frame" instance=ExtResource( 2 )]
+position = Vector2( 6, 5 )
+color = "white"
+playerNumber = "1"
+
+[node name="player2" parent="Frame" instance=ExtResource( 2 )]
+position = Vector2( 6, 5 )
+color = "black"
+playerNumber = "2"
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2( 80, 91 )
+current = true
+zoom = Vector2( 0.7, 0.7 )
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+margin_right = 160.0
+margin_bottom = 160.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Win" type="Label" parent="MarginContainer"]
+visible = false
+margin_right = 160.0
+margin_bottom = 160.0
+size_flags_vertical = 5
+text = "Text"
+align = 1
+valign = 1
+script = ExtResource( 3 )
+
+[node name="Music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 8 )
+volume_db = -2.5
+pitch_scale = 0.7
+autoplay = true
+
+[node name="Impact" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 9 )
+script = ExtResource( 10 )
+[connection signal="hit" from="Frame/player1" to="Impact" method="_on_player1_hit"]
+[connection signal="win" from="Frame/player1" to="MarginContainer/Win" method="_on_player1_win"]
+[connection signal="hit" from="Frame/player2" to="Impact" method="_on_player2_hit"]
+[connection signal="win" from="Frame/player2" to="MarginContainer/Win" method="_on_player2_win"]

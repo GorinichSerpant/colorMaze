@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://testTiles.png" type="Texture" id=1]
+
+[node name="coloredTile" type="Sprite"]
+modulate = Color( 0.08, 0.16, 0.0826667, 1 )
+texture = ExtResource( 1 )
+vframes = 2
+hframes = 4
+frame = 2

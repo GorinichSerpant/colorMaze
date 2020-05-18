@@ -1,0 +1,360 @@
+[gd_scene load_steps=33 format=2]
+
+[ext_resource path="res://Tutorial.tres" type="Animation" id=1]
+[ext_resource path="res://whiteArrows.png" type="Texture" id=2]
+[ext_resource path="res://blackArrows.png" type="Texture" id=3]
+[ext_resource path="res://Yellow Forest.ogg" type="AudioStream" id=4]
+[ext_resource path="res://tutroialAnimation.png" type="Texture" id=5]
+[ext_resource path="res://NFF-bump.wav" type="AudioStream" id=6]
+[ext_resource path="res://new_tileset.tres" type="TileSet" id=7]
+[ext_resource path="res://blackArrows.gd" type="Script" id=8]
+[ext_resource path="res://Impact.gd" type="Script" id=9]
+[ext_resource path="res://Label.gd" type="Script" id=10]
+[ext_resource path="res://player.tscn" type="PackedScene" id=11]
+[ext_resource path="res://whiteArrows.gd" type="Script" id=12]
+[ext_resource path="res://whiteShake.tres" type="Animation" id=13]
+[ext_resource path="res://TutorialAnim.gd" type="Script" id=14]
+[ext_resource path="res://blackShake.tres" type="Animation" id=15]
+[ext_resource path="res://little-conquest.ttf" type="DynamicFontData" id=16]
+[ext_resource path="res://Music.gd" type="Script" id=17]
+[ext_resource path="res://oldGame.gd" type="Script" id=18]
+[ext_resource path="res://Restart.gd" type="Script" id=19]
+[ext_resource path="res://littleConquestFont.tres" type="DynamicFont" id=20]
+[ext_resource path="res://Dangerous Dungeon.ogg.ogg" type="AudioStream" id=21]
+[ext_resource path="res://CountDown.gd" type="Script" id=22]
+[ext_resource path="res://countDown.tres" type="Animation" id=23]
+[ext_resource path="res://Frame.gd" type="Script" id=24]
+[ext_resource path="res://Instructions2.gd" type="Script" id=25]
+[ext_resource path="res://Instructions.gd" type="Script" id=26]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends TileMap
+
+
+var tileSet
+
+export var darkstart = 0.2
+export var darkend = 0.3
+
+export var greystart = 0.5
+export var greyend = 0.6
+
+export var whitestart = 0.8
+export var whiteend = 0.9
+
+var rng = RandomNumberGenerator.new()
+var coloredTile = load(\"res://coloredTile.tscn\")
+
+var gameOn = false
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	rng.randomize()
+	var swapRandomizer = rng.randi_range(1,4)
+	
+	if swapRandomizer == 2:
+		swap1()
+	if swapRandomizer == 3:
+		swap2()
+	if swapRandomizer == 4:
+		swap1()
+		swap2()
+	
+	
+	for i in range(10):
+		for j in range (10):
+			createSprite(i,j)
+
+func swap1():
+	for i in (10):
+		for j in (10-i):
+			var holder = get_cell(i,j)
+			print(holder)
+			set_cell(i,j,get_cell(9-j,9-i))
+			set_cell(9-j,9-i,holder)
+
+func swap2():
+	for i in (10):
+		for j in (i):
+			var holder = get_cell(i,j)
+			if holder != 5 && holder != 6:
+				#print(holder)
+				set_cell(i,j,get_cell(j,i))
+				set_cell(j,i,holder)
+
+
+
+func checkPassiblity(color, direction):
+	var nextCell = world_to_map(position) + direction
+	
+	if tile_set.tile_get_name(nextCell) == color || tile_set.tile_get_name(nextCell) == \"grey\":
+		return true
+	else:
+		return false
+
+func createSprite(x, y):
+	var ID = get_cell(x,y)
+	rng.randomize()
+	var hue = rng.randf_range(0.0,1.0)
+	var value = 0.0
+	
+	if ID == 3:
+		value = rng.randf_range(greystart, greyend)
+	if ID == 2:
+		value = rng.randf_range(darkstart, darkend)
+	if ID == 4:
+		value = rng.randf_range(whitestart, whiteend)
+	if ID == 5 || ID == 6:
+		return
+	
+	var tileColor = Color.from_hsv(hue,0.5,value,1.0)
+	
+	var coloredTile_instance = coloredTile.instance()
+	coloredTile_instance.set_name(\"Tile\"+String(x)+\"_\"+String(y))
+	add_child_below_node($SpriteHolder,coloredTile_instance)
+	
+	coloredTile_instance.set_modulate(tileColor)
+	
+	coloredTile_instance.set_position(Vector2(x*16+8,y*16+8))
+"
+
+[sub_resource type="Animation" id=2]
+resource_name = "blackShake"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/path = NodePath("blackArrows:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.2, 0.5 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( -25.4798, 146.799 ), Vector2( -26.4798, 146.799 ), Vector2( -25.4798, 146.799 ) ]
+}
+
+[sub_resource type="DynamicFont" id=3]
+size = 48
+font_data = ExtResource( 16 )
+
+[sub_resource type="DynamicFont" id=4]
+font_data = ExtResource( 16 )
+
+[sub_resource type="DynamicFont" id=5]
+font_data = ExtResource( 16 )
+
+[sub_resource type="DynamicFont" id=6]
+size = 8
+font_data = ExtResource( 16 )
+
+[node name="Game" type="Node"]
+script = ExtResource( 18 )
+
+[node name="Background" type="ColorRect" parent="."]
+margin_left = -159.418
+margin_top = -53.0549
+margin_right = 332.582
+margin_bottom = 246.945
+color = Color( 0.392157, 0.509804, 0.607843, 1 )
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Frame" type="ColorRect" parent="."]
+visible = false
+margin_left = -5.0
+margin_top = -5.0
+margin_right = 167.0
+margin_bottom = 166.0
+color = Color( 0, 0, 0, 1 )
+script = ExtResource( 24 )
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Thumper" type="AnimationPlayer" parent="Frame"]
+anims/blackShake = ExtResource( 15 )
+anims/whiteShake = ExtResource( 13 )
+
+[node name="blackArrows" type="Sprite" parent="Frame"]
+position = Vector2( -25.4798, 146.799 )
+texture = ExtResource( 3 )
+script = ExtResource( 8 )
+
+[node name="whiteArrows" type="Sprite" parent="Frame"]
+position = Vector2( 199.759, 144.792 )
+texture = ExtResource( 2 )
+script = ExtResource( 12 )
+
+[node name="grid" type="TileMap" parent="Frame"]
+position = Vector2( 6, 5 )
+tile_set = ExtResource( 7 )
+cell_size = Vector2( 16, 16 )
+format = 1
+tile_data = PoolIntArray( 0, 4, 0, 1, 4, 0, 2, 4, 0, 3, 4, 0, 4, 2, 0, 5, 3, 0, 6, 2, 0, 7, 4, 0, 8, 3, 0, 9, 4, 0, 65536, 4, 0, 65537, 2, 0, 65538, 2, 0, 65539, 4, 0, 65540, 4, 0, 65541, 3, 0, 65542, 2, 0, 65543, 2, 0, 65544, 5, 0, 65545, 2, 0, 131072, 4, 0, 131073, 2, 0, 131074, 4, 0, 131075, 3, 0, 131076, 2, 0, 131077, 2, 0, 131078, 4, 0, 131079, 2, 0, 131080, 4, 0, 131081, 4, 0, 196608, 3, 0, 196609, 3, 0, 196610, 2, 0, 196611, 2, 0, 196612, 4, 0, 196613, 4, 0, 196614, 2, 0, 196615, 3, 0, 196616, 2, 0, 196617, 4, 0, 262144, 4, 0, 262145, 4, 0, 262146, 3, 0, 262147, 4, 0, 262148, 2, 0, 262149, 3, 0, 262150, 4, 0, 262151, 4, 0, 262152, 2, 0, 262153, 3, 0, 327680, 3, 0, 327681, 2, 0, 327682, 2, 0, 327683, 3, 0, 327684, 2, 0, 327685, 2, 0, 327686, 3, 0, 327687, 4, 0, 327688, 4, 0, 327689, 4, 0, 393216, 4, 0, 393217, 3, 0, 393218, 2, 0, 393219, 4, 0, 393220, 4, 0, 393221, 4, 0, 393222, 3, 0, 393223, 2, 0, 393224, 3, 0, 393225, 4, 0, 458752, 2, 0, 458753, 4, 0, 458754, 4, 0, 458755, 2, 0, 458756, 3, 0, 458757, 4, 0, 458758, 2, 0, 458759, 4, 0, 458760, 2, 0, 458761, 3, 0, 524288, 2, 0, 524289, 6, 0, 524290, 3, 0, 524291, 4, 0, 524292, 2, 0, 524293, 2, 0, 524294, 3, 0, 524295, 4, 0, 524296, 4, 0, 524297, 3, 0, 589824, 4, 0, 589825, 2, 0, 589826, 2, 0, 589827, 2, 0, 589828, 2, 0, 589829, 3, 0, 589830, 4, 0, 589831, 3, 0, 589832, 4, 0, 589833, 2, 0 )
+script = SubResource( 1 )
+
+[node name="SpriteHolder" type="Node" parent="Frame/grid"]
+
+[node name="player1" parent="Frame/grid" instance=ExtResource( 11 )]
+color = "white"
+playerNumber = "1"
+
+[node name="player2" parent="Frame/grid" instance=ExtResource( 11 )]
+color = "black"
+playerNumber = "2"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Frame"]
+autoplay = "Tutorial"
+anims/Tutorial = ExtResource( 1 )
+anims/blackShake = SubResource( 2 )
+anims/whiteShake = ExtResource( 13 )
+
+[node name="TutorialAnim" type="Sprite" parent="Frame/AnimationPlayer"]
+visible = false
+position = Vector2( 80, 179 )
+texture = ExtResource( 5 )
+vframes = 4
+frame = 3
+script = ExtResource( 14 )
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2( 80, 91 )
+current = true
+zoom = Vector2( 0.7, 0.7 )
+
+[node name="CountDown" type="Label" parent="Camera2D"]
+margin_left = -5.0912
+margin_top = -12.657
+margin_right = 14.9088
+margin_bottom = 15.343
+size_flags_horizontal = 3
+size_flags_vertical = 6
+custom_fonts/font = SubResource( 3 )
+custom_colors/font_color = Color( 0.729412, 0.729412, 0.729412, 1 )
+align = 1
+valign = 1
+script = ExtResource( 22 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Counter" type="AnimationPlayer" parent="Camera2D/CountDown"]
+anims/CountDown = ExtResource( 23 )
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+margin_right = 160.0
+margin_bottom = 160.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Win" type="Label" parent="MarginContainer"]
+visible = false
+margin_right = 160.0
+margin_bottom = 160.0
+size_flags_vertical = 5
+custom_fonts/font = ExtResource( 20 )
+custom_colors/font_color = Color( 0.7, 0.7, 0.7, 1 )
+text = "Text"
+align = 1
+valign = 1
+script = ExtResource( 10 )
+
+[node name="Restart" type="Label" parent="MarginContainer"]
+visible = false
+margin_right = 153.0
+margin_bottom = 160.0
+size_flags_horizontal = 0
+size_flags_vertical = 5
+custom_fonts/font = SubResource( 4 )
+custom_colors/font_color = Color( 0.729412, 0.729412, 0.729412, 1 )
+text = "Press Enter to Restart
+
+game by Daniel Boiko 
+and Boris Shapoval"
+align = 1
+valign = 2
+script = ExtResource( 19 )
+
+[node name="Music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 4 )
+volume_db = -2.5
+pitch_scale = 0.7
+autoplay = true
+script = ExtResource( 17 )
+gameSong = ExtResource( 4 )
+endSong = ExtResource( 21 )
+
+[node name="Impact" type="AudioStreamPlayer" parent="Music"]
+stream = ExtResource( 6 )
+script = ExtResource( 9 )
+
+[node name="Instructions" type="Label" parent="."]
+visible = false
+margin_left = -87.0
+margin_right = -10.0
+margin_bottom = 34.0
+custom_fonts/font = SubResource( 5 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+text = "Esc: Quit
+M: Mute"
+script = ExtResource( 26 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Instructions2" type="Label" parent="."]
+visible = false
+margin_left = 176.796
+margin_top = -0.282036
+margin_right = 253.796
+margin_bottom = 33.718
+custom_fonts/font = SubResource( 5 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Esc: Quit
+M: Mute"
+align = 2
+script = ExtResource( 25 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="credits" type="Label" parent="."]
+visible = false
+margin_left = -96.0
+margin_top = 169.0
+margin_right = 257.0
+margin_bottom = 178.0
+size_flags_horizontal = 0
+size_flags_vertical = 5
+custom_fonts/font = SubResource( 6 )
+custom_colors/font_color = Color( 0.729412, 0.729412, 0.729412, 1 )
+text = "Font from Jack Oatley, music from Patrick de Arteaga, and  a sound effect from noiseforfun.com"
+align = 1
+valign = 2
+script = ExtResource( 19 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+[connection signal="hide" from="Frame" to="Frame/AnimationPlayer/TutorialAnim" method="_on_Frame_hide"]
+[connection signal="hit" from="Frame/grid/player1" to="Frame/blackArrows" method="_on_player1_hit"]
+[connection signal="hit" from="Frame/grid/player1" to="Music/Impact" method="_on_player1_hit"]
+[connection signal="win" from="Frame/grid/player1" to="." method="_on_player1_win"]
+[connection signal="win" from="Frame/grid/player1" to="MarginContainer/Win" method="_on_player1_win"]
+[connection signal="win" from="Frame/grid/player1" to="Music" method="_on_player1_win"]
+[connection signal="hit" from="Frame/grid/player2" to="Frame/whiteArrows" method="_on_player2_hit"]
+[connection signal="hit" from="Frame/grid/player2" to="Music/Impact" method="_on_player2_hit"]
+[connection signal="win" from="Frame/grid/player2" to="." method="_on_player2_win"]
+[connection signal="win" from="Frame/grid/player2" to="MarginContainer/Win" method="_on_player2_win"]
+[connection signal="win" from="Frame/grid/player2" to="Music" method="_on_player2_win"]
+[connection signal="animation_finished" from="Camera2D/CountDown/Counter" to="Frame/AnimationPlayer/TutorialAnim" method="_on_Counter_animation_finished"]
+[connection signal="animation_finished" from="Camera2D/CountDown/Counter" to="." method="_on_Counter_animation_finished"]
+[connection signal="animation_finished" from="Camera2D/CountDown/Counter" to="Frame" method="_on_Counter_animation_finished"]
+[connection signal="animation_finished" from="Camera2D/CountDown/Counter" to="Instructions" method="_on_Counter_animation_finished"]
+[connection signal="animation_finished" from="Camera2D/CountDown/Counter" to="Instructions2" method="_on_Counter_animation_finished"]
+[connection signal="visibility_changed" from="MarginContainer/Win" to="MarginContainer/Restart" method="_on_Win_visibility_changed"]
+[connection signal="visibility_changed" from="MarginContainer/Win" to="credits" method="_on_Win_visibility_changed"]
