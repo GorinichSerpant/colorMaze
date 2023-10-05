@@ -4,8 +4,8 @@ onready var grid = get_parent()
 onready var frame = grid.get_parent()
 
 
-var x = 1
-var y = 8
+var x = 9
+var y = 0
 
 export var color = ""
 export var playerNumber = ""

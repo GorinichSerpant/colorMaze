@@ -50,37 +50,89 @@ var gameOn = false
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	rng.randomize()
-	var swapRandomizer = rng.randi_range(1,4)
+	var swapRandomizer = rng.randi_range(1,2)
+	generate_board()
 	
-	if swapRandomizer == 2:
-		swap1()
-	if swapRandomizer == 3:
-		swap2()
-	if swapRandomizer == 4:
-		swap1()
-		swap2()
-	
+	if swapRandomizer == 1:
+		swap()
 	
 	for i in range(10):
 		for j in range (10):
 			createSprite(i,j)
 
-func swap1():
+
+func generate_board():
+	rng.randomize()
+	var usedcells = [] # Number go from 0 to 99 being x+10*y
+	for i in range(100):
+		usedcells.append(i)
+	var index = usedcells.find(9) # Starting tile
+	usedcells.remove(index)
+	index = usedcells.find(90) # Ending tile
+	usedcells.remove(index)
+	set_cell(0,9,5) # Starting tile
+	set_cell(9,0,6) # Ending tile
+	
+	var x1 = 9
+	var y1 = 0
+	var direction = 1
+	while x1 > 0 or y1 < 9:
+		if direction == 1 and x1 != 0:
+			x1 -= 1
+			if x1 != 0 or y1 != 9:
+				set_cell(x1, y1, 4)
+			index = usedcells.find(x1+10*y1)
+			if index != -1:
+				usedcells.remove(index)
+		elif direction == 2 and y1 != 9:
+			y1 += 1
+			if x1 != 0 or y1 != 9:
+				set_cell(x1, y1, 4) # White
+			index = usedcells.find(x1+10*y1)
+			if index != -1:
+				usedcells.remove(index)
+		direction = rng.randi_range(1,2)
+	
+	var x2 = 9
+	var y2 = 0
+	direction = 2
+	while x2 > 0 or y2 < 9:
+		if direction == 1 and x2 != 0:
+			x2 -= 1
+			index = usedcells.find(x2+10*y2)
+			if index != -1:
+				set_cell(x2, y2, 2) # Black
+				usedcells.remove(index)
+			elif x2 != 0:
+				set_cell(x2, y2, 3) # Grey
+		elif direction == 2 and y2 != 9:
+			y2 += 1
+			index = usedcells.find(x2+10*y2)
+			if index != -1:
+				set_cell(x2, y2, 2) # Black
+				usedcells.remove(index)
+			elif y2 != 9:
+				set_cell(x2, y2, 3) # Grey
+		direction = rng.randi_range(1,2)
+	
+	var num = 0
+	var i
+	var j
+	var tile_colour
+	while usedcells.size() > 0:
+		num = usedcells.pop_front()
+		i = num % 10
+		j = (num-i) / 10
+		tile_colour = rng.randi_range(1,2) * 2 # Black or White
+		set_cell(i, j, tile_colour) # Grey
+
+
+func swap():
 	for i in (10):
 		for j in (10-i):
 			var holder = get_cell(i,j)
-			print(holder)
 			set_cell(i,j,get_cell(9-j,9-i))
 			set_cell(9-j,9-i,holder)
-
-func swap2():
-	for i in (10):
-		for j in (i):
-			var holder = get_cell(i,j)
-			if holder != 5 && holder != 6:
-				#print(holder)
-				set_cell(i,j,get_cell(j,i))
-				set_cell(j,i,holder)
 
 
 
@@ -194,7 +246,7 @@ position = Vector2( 6, 5 )
 tile_set = ExtResource( 7 )
 cell_size = Vector2( 16, 16 )
 format = 1
-tile_data = PoolIntArray( 0, 4, 0, 1, 4, 0, 2, 4, 0, 3, 4, 0, 4, 2, 0, 5, 3, 0, 6, 2, 0, 7, 4, 0, 8, 3, 0, 9, 4, 0, 65536, 4, 0, 65537, 2, 0, 65538, 2, 0, 65539, 4, 0, 65540, 4, 0, 65541, 3, 0, 65542, 2, 0, 65543, 2, 0, 65544, 5, 0, 65545, 2, 0, 131072, 4, 0, 131073, 2, 0, 131074, 4, 0, 131075, 3, 0, 131076, 2, 0, 131077, 2, 0, 131078, 4, 0, 131079, 2, 0, 131080, 4, 0, 131081, 4, 0, 196608, 3, 0, 196609, 3, 0, 196610, 2, 0, 196611, 2, 0, 196612, 4, 0, 196613, 4, 0, 196614, 2, 0, 196615, 3, 0, 196616, 2, 0, 196617, 4, 0, 262144, 4, 0, 262145, 4, 0, 262146, 3, 0, 262147, 4, 0, 262148, 2, 0, 262149, 3, 0, 262150, 4, 0, 262151, 4, 0, 262152, 2, 0, 262153, 3, 0, 327680, 3, 0, 327681, 2, 0, 327682, 2, 0, 327683, 3, 0, 327684, 2, 0, 327685, 2, 0, 327686, 3, 0, 327687, 4, 0, 327688, 4, 0, 327689, 4, 0, 393216, 4, 0, 393217, 3, 0, 393218, 2, 0, 393219, 4, 0, 393220, 4, 0, 393221, 4, 0, 393222, 3, 0, 393223, 2, 0, 393224, 3, 0, 393225, 4, 0, 458752, 2, 0, 458753, 4, 0, 458754, 4, 0, 458755, 2, 0, 458756, 3, 0, 458757, 4, 0, 458758, 2, 0, 458759, 4, 0, 458760, 2, 0, 458761, 3, 0, 524288, 2, 0, 524289, 6, 0, 524290, 3, 0, 524291, 4, 0, 524292, 2, 0, 524293, 2, 0, 524294, 3, 0, 524295, 4, 0, 524296, 4, 0, 524297, 3, 0, 589824, 4, 0, 589825, 2, 0, 589826, 2, 0, 589827, 2, 0, 589828, 2, 0, 589829, 3, 0, 589830, 4, 0, 589831, 3, 0, 589832, 4, 0, 589833, 2, 0 )
+tile_data = PoolIntArray( 0, 5, 0, 1, 5, 0, 2, 5, 0, 3, 5, 0, 4, 5, 0, 5, 5, 0, 6, 5, 0, 7, 5, 0, 8, 5, 0, 9, 5, 0, 65536, 5, 0, 65537, 5, 0, 65538, 5, 0, 65539, 5, 0, 65540, 5, 0, 65541, 5, 0, 65542, 5, 0, 65543, 5, 0, 65544, 5, 0, 65545, 5, 0, 131072, 5, 0, 131073, 5, 0, 131074, 5, 0, 131075, 5, 0, 131076, 5, 0, 131077, 5, 0, 131078, 5, 0, 131079, 5, 0, 131080, 5, 0, 131081, 5, 0, 196608, 5, 0, 196609, 5, 0, 196610, 5, 0, 196611, 5, 0, 196612, 5, 0, 196613, 5, 0, 196614, 5, 0, 196615, 5, 0, 196616, 5, 0, 196617, 5, 0, 262144, 5, 0, 262145, 5, 0, 262146, 5, 0, 262147, 5, 0, 262148, 5, 0, 262149, 5, 0, 262150, 5, 0, 262151, 5, 0, 262152, 5, 0, 262153, 5, 0, 327680, 5, 0, 327681, 5, 0, 327682, 5, 0, 327683, 5, 0, 327684, 5, 0, 327685, 5, 0, 327686, 5, 0, 327687, 5, 0, 327688, 5, 0, 327689, 5, 0, 393216, 5, 0, 393217, 5, 0, 393218, 5, 0, 393219, 5, 0, 393220, 5, 0, 393221, 5, 0, 393222, 5, 0, 393223, 5, 0, 393224, 5, 0, 393225, 5, 0, 458752, 5, 0, 458753, 5, 0, 458754, 5, 0, 458755, 5, 0, 458756, 5, 0, 458757, 5, 0, 458758, 5, 0, 458759, 5, 0, 458760, 5, 0, 458761, 5, 0, 524288, 5, 0, 524289, 5, 0, 524290, 5, 0, 524291, 5, 0, 524292, 5, 0, 524293, 5, 0, 524294, 5, 0, 524295, 5, 0, 524296, 5, 0, 524297, 5, 0, 589824, 5, 0, 589825, 5, 0, 589826, 5, 0, 589827, 5, 0, 589828, 5, 0, 589829, 5, 0, 589830, 5, 0, 589831, 5, 0, 589832, 5, 0, 589833, 5, 0 )
 script = SubResource( 1 )
 
 [node name="SpriteHolder" type="Node" parent="Frame/grid"]
@@ -233,8 +285,8 @@ margin_right = 14.9088
 margin_bottom = 15.343
 size_flags_horizontal = 3
 size_flags_vertical = 6
-custom_fonts/font = SubResource( 3 )
 custom_colors/font_color = Color( 0.729412, 0.729412, 0.729412, 1 )
+custom_fonts/font = SubResource( 3 )
 align = 1
 valign = 1
 script = ExtResource( 22 )
@@ -257,8 +309,8 @@ visible = false
 margin_right = 160.0
 margin_bottom = 160.0
 size_flags_vertical = 5
-custom_fonts/font = ExtResource( 20 )
 custom_colors/font_color = Color( 0.7, 0.7, 0.7, 1 )
+custom_fonts/font = ExtResource( 20 )
 text = "Text"
 align = 1
 valign = 1
@@ -270,8 +322,8 @@ margin_right = 153.0
 margin_bottom = 160.0
 size_flags_horizontal = 0
 size_flags_vertical = 5
-custom_fonts/font = SubResource( 4 )
 custom_colors/font_color = Color( 0.729412, 0.729412, 0.729412, 1 )
+custom_fonts/font = SubResource( 4 )
 text = "Press Enter to Restart
 
 game by Daniel Boiko 
@@ -298,8 +350,8 @@ visible = false
 margin_left = -87.0
 margin_right = -10.0
 margin_bottom = 34.0
-custom_fonts/font = SubResource( 5 )
 custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_fonts/font = SubResource( 5 )
 text = "Esc: Quit
 M: Mute"
 script = ExtResource( 26 )
@@ -313,8 +365,8 @@ margin_left = 176.796
 margin_top = -0.282036
 margin_right = 253.796
 margin_bottom = 33.718
-custom_fonts/font = SubResource( 5 )
 custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 5 )
 text = "Esc: Quit
 M: Mute"
 align = 2
@@ -331,8 +383,8 @@ margin_right = 257.0
 margin_bottom = 178.0
 size_flags_horizontal = 0
 size_flags_vertical = 5
-custom_fonts/font = SubResource( 6 )
 custom_colors/font_color = Color( 0.729412, 0.729412, 0.729412, 1 )
+custom_fonts/font = SubResource( 6 )
 text = "Font from Jack Oatley, music from Patrick de Arteaga, and  a sound effect from noiseforfun.com"
 align = 1
 valign = 2
@@ -340,6 +392,7 @@ script = ExtResource( 19 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
 [connection signal="hide" from="Frame" to="Frame/AnimationPlayer/TutorialAnim" method="_on_Frame_hide"]
 [connection signal="hit" from="Frame/grid/player1" to="Frame/blackArrows" method="_on_player1_hit"]
 [connection signal="hit" from="Frame/grid/player1" to="Music/Impact" method="_on_player1_hit"]
@@ -351,9 +404,9 @@ __meta__ = {
 [connection signal="win" from="Frame/grid/player2" to="." method="_on_player2_win"]
 [connection signal="win" from="Frame/grid/player2" to="MarginContainer/Win" method="_on_player2_win"]
 [connection signal="win" from="Frame/grid/player2" to="Music" method="_on_player2_win"]
-[connection signal="animation_finished" from="Camera2D/CountDown/Counter" to="Frame/AnimationPlayer/TutorialAnim" method="_on_Counter_animation_finished"]
 [connection signal="animation_finished" from="Camera2D/CountDown/Counter" to="." method="_on_Counter_animation_finished"]
 [connection signal="animation_finished" from="Camera2D/CountDown/Counter" to="Frame" method="_on_Counter_animation_finished"]
+[connection signal="animation_finished" from="Camera2D/CountDown/Counter" to="Frame/AnimationPlayer/TutorialAnim" method="_on_Counter_animation_finished"]
 [connection signal="animation_finished" from="Camera2D/CountDown/Counter" to="Instructions" method="_on_Counter_animation_finished"]
 [connection signal="animation_finished" from="Camera2D/CountDown/Counter" to="Instructions2" method="_on_Counter_animation_finished"]
 [connection signal="visibility_changed" from="MarginContainer/Win" to="MarginContainer/Restart" method="_on_Win_visibility_changed"]
